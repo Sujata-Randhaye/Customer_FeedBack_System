@@ -14,7 +14,7 @@ const app = express()
 // Middleware
 app.use(
     cors({
-      origin: "https://your-frontend.vercel.app", // Update this with your frontend URL
+      origin: "*", // Update this with your frontend URL
       credentials: true,
     })
   );
