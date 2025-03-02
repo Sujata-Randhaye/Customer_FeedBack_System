@@ -1,23 +1,37 @@
 import express from 'express'
-import mongoose from 'mongoose'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import feedbackRoutes from './routes/feedback.route.js'
 import connectDB from './database/db.js'
+import authRoutes from './routes/auth.route.js'
+import feedbackRoutes from './routes/feedback.route.js'
 
-dotenv.config({
-    path:'./env',
-})
-connectDB()
+// Load environment variables
+dotenv.config()
+
+// Initialize express
 const app = express()
-const PORT = process.env.PORT || 3000
 
 // Middleware
 app.use(cors())
 app.use(express.json())
 
-app.use('/api/feedback',feedbackRoutes)
+// Routes
+app.use('/api/auth', authRoutes)
+app.use('/api/feedback', feedbackRoutes)
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+const PORT = process.env.PORT || 3000
+
+// Connect to database and start server
+const startServer = async () => {
+    try {
+        await connectDB()
+        app.listen(PORT, () => {
+            console.log(`Server running on port ${PORT}`)
+        })
+    } catch (error) {
+        console.error('Failed to start server:', error)
+        process.exit(1)
+    }
+}
+
+startServer()

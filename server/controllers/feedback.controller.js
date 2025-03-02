@@ -14,8 +14,12 @@ const validateFeedback = [
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() })
       }
-  
-      const feedback = new Feedback(req.body)
+      const user=req.body
+      const feedback = new Feedback(
+        {
+          ...req.body,
+        }
+        )
       await feedback.save()
       res.status(201).json(feedback)
     } catch (error) {
@@ -25,7 +29,9 @@ const validateFeedback = [
   
   const getFeedbackList=async (req, res) => {
     try {
-      const feedback = await Feedback.find().sort({ createdAt: -1 })
+      const feedback = await Feedback.find()
+        .populate('user', 'name email') // Populate user details
+        .sort({ createdAt: -1 })
       res.json(feedback)
     } catch (error) {
       res.status(500).json({ error: 'Error fetching feedback' })

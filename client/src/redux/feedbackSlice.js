@@ -1,21 +1,41 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-const API_URL = 'http://localhost:3000//api/feedback'
+const API_URL = 'http://localhost:3000/api/feedback'
 
 export const submitFeedback = createAsyncThunk(
   'feedback/submit',
-  async (feedbackData) => {
-    const response = await axios.post(API_URL, feedbackData)
-    return response.data
+  async (feedbackData, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState()
+      const config = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`
+        }
+      }
+      const response = await axios.post(API_URL, feedbackData, config)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to submit feedback')
+    }
   }
 )
 
 export const fetchFeedback = createAsyncThunk(
   'feedback/fetch',
-  async () => {
-    const response = await axios.get(API_URL)
-    return response.data
+  async (_, { getState, rejectWithValue }) => {
+    try {
+      const { auth } = getState()
+      const config = {
+        headers: {
+          Authorization: `Bearer ${auth.token}`
+        }
+      }
+      const response = await axios.get(API_URL, config)
+      return response.data
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.error || 'Failed to fetch feedback')
+    }
   }
 )
 
@@ -26,25 +46,43 @@ const feedbackSlice = createSlice({
     status: 'idle',
     error: null
   },
-  reducers: {},
+  reducers: {
+    clearFeedback: (state) => {
+      state.items = []
+      state.status = 'idle'
+      state.error = null
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(submitFeedback.pending, (state) => {
         state.status = 'loading'
+        state.error = null
       })
       .addCase(submitFeedback.fulfilled, (state, action) => {
         state.status = 'succeeded'
-        state.items.push(action.payload)
+        state.items.unshift(action.payload) // Add new feedback at the beginning
+        state.error = null
       })
       .addCase(submitFeedback.rejected, (state, action) => {
         state.status = 'failed'
-        state.error = action.error.message
+        state.error = action.payload
+      })
+      .addCase(fetchFeedback.pending, (state) => {
+        state.status = 'loading'
+        state.error = null
       })
       .addCase(fetchFeedback.fulfilled, (state, action) => {
         state.status = 'succeeded'
         state.items = action.payload
+        state.error = null
+      })
+      .addCase(fetchFeedback.rejected, (state, action) => {
+        state.status = 'failed'
+        state.error = action.payload
       })
   }
 })
 
+export const { clearFeedback } = feedbackSlice.actions
 export default feedbackSlice.reducer 
