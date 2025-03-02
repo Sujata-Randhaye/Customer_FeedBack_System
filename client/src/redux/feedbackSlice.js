@@ -4,7 +4,7 @@ import axios from 'axios'
 //localhost
 // const API_URL = 'http://localhost:3000/api/auth'
 //production
-const API_URL = 'https://customer-feedback-api.onrender.com/api/feedback';
+const API_URL = 'https://customer-feedback-system-4.onrender.com/api/feedback';
 
 export const submitFeedback = createAsyncThunk(
   'feedback/submit',
