@@ -12,7 +12,12 @@ dotenv.config()
 const app = express()
 
 // Middleware
-app.use(cors())
+app.use(
+    cors({
+      origin: "https://your-frontend.vercel.app", // Update this with your frontend URL
+      credentials: true,
+    })
+  );
 app.use(express.json())
 
 // Routes
