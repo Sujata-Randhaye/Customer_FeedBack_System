@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-//localhost
-// const API_URL = 'http://localhost:3000/api/auth'
-//production
-const API_URL = 'https://customer-feedback-system-4.onrender.com/api/auth';
+
 
 export const signup = createAsyncThunk(
   'auth/signup',
   async (userData) => {
-    const response = await axios.post(`${API_URL}/signup`, userData)
+    const response = await axios.post(`${process.env.API_URL}/api/signup`, userData)
     localStorage.setItem('token', response.data.token)
     return response.data
   }

@@ -1,10 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
-//localhost
-// const API_URL = 'http://localhost:3000/api/auth'
-//production
-const API_URL = 'https://customer-feedback-system-4.onrender.com/api/feedback';
 
 export const submitFeedback = createAsyncThunk(
   'feedback/submit',
@@ -16,7 +12,7 @@ export const submitFeedback = createAsyncThunk(
           Authorization: `Bearer ${auth.token}`
         }
       }
-      const response = await axios.post(API_URL, feedbackData, config)
+      const response = await axios.post(`${process.env.API_URL}/api/feedback`, feedbackData, config)
       return response.data
     } catch (error) {
       return rejectWithValue(error.response?.data?.error || 'Failed to submit feedback')
