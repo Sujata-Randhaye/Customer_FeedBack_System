@@ -14,7 +14,7 @@ const app = express()
 // Middleware
 app.use(
     cors({
-      origin: "*", // Update this with your frontend URL
+      origin: "https://customer-feedback-system-cttb44v2a-sujata-randhayes-projects.vercel.app", // Update this with your frontend URL
       credentials: true,
     })
   );
